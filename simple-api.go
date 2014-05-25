@@ -9,7 +9,7 @@ import (
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/sample", sample).Methods("GET")
-  r.HandleFunc("/", sample).Methods("GET")
+	r.HandleFunc("/", sample).Methods("GET")
 
 	http.Handle("/", r)
 
