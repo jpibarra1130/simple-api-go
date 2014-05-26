@@ -32,7 +32,7 @@ func postsHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	log.Println("Post: " + string(out))
+	log.Printf("Post: %v", string(out))
 
 	w.Write([]byte(out))
 }
