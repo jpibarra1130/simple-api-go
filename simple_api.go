@@ -1,15 +1,22 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
 
+type Post struct {
+	Id    int
+	Title string
+	Body  string
+}
+
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/sample", sample).Methods("GET")
-	r.HandleFunc("/", sample).Methods("GET")
+	r.HandleFunc("/posts", postsHandler).Methods("GET")
+	r.HandleFunc("/", postsHandler).Methods("GET")
 
 	http.Handle("/", r)
 
@@ -17,6 +24,15 @@ func main() {
 	http.ListenAndServe(":3000", nil)
 }
 
-func sample(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello there."))
+func postsHandler(w http.ResponseWriter, r *http.Request) {
+	post := Post{Id: 1, Title: "This is a test post", Body: "This is the body."}
+
+	out, err := json.Marshal(post)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println("Post: " + string(out))
+
+	w.Write([]byte(out))
 }
