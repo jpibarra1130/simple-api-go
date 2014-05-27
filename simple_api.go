@@ -1,16 +1,19 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
+	"github.com/coopernurse/gorp"
 	"github.com/gorilla/mux"
+	_ "github.com/ziutek/mymysql/godrv"
 	"log"
 	"net/http"
 )
 
 type Post struct {
-	Id    int
-	Title string
-	Body  string
+	Id    int    `db:"id"`
+	Title string `db:"title"`
+	Body  string `db:"body"`
 }
 
 func main() {
@@ -25,9 +28,8 @@ func main() {
 }
 
 func postsHandler(w http.ResponseWriter, r *http.Request) {
-	post := Post{Id: 1, Title: "This is a test post", Body: "This is the body."}
+	out, err := json.Marshal(posts())
 
-	out, err := json.Marshal(post)
 	if err != nil {
 		panic(err)
 	}
@@ -35,4 +37,21 @@ func postsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Post: %v", string(out))
 
 	w.Write([]byte(out))
+}
+
+func posts() []Post {
+	db, err := sql.Open("mymysql", "tcp:localhost:3306*simple_api_development/root/")
+
+	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
+	defer dbmap.Db.Close()
+
+	var posts []Post
+	_, err = dbmap.Select(&posts, "select id, title, body from posts order by id")
+
+	if err != nil {
+		log.Printf("Error: ", err)
+		return nil
+	}
+
+	return posts
 }
