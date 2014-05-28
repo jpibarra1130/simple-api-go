@@ -40,7 +40,7 @@ func postsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func posts() []Post {
-	db, err := sql.Open("mymysql", "tcp:localhost:3306*simple_api_development/root/")
+	db, err := sql.Open("mymysql", "tcp:localhost:3306*simple_api_go_development/root/")
 
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
 	defer dbmap.Db.Close()
