@@ -3,17 +3,25 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"github.com/coopernurse/gorp"
 	"github.com/gorilla/mux"
+	"github.com/kylelemons/go-gypsy/yaml"
 	_ "github.com/ziutek/mymysql/godrv"
 	"log"
 	"net/http"
+	"path/filepath"
 )
 
 type Post struct {
 	Id    int    `db:"id"`
 	Title string `db:"title"`
 	Body  string `db:"body"`
+}
+
+type DbConf struct {
+	Driver string
+	Url    string
 }
 
 func main() {
@@ -40,7 +48,16 @@ func postsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func posts() []Post {
-	db, err := sql.Open("mymysql", "tcp:localhost:3306*simple_api_go_development/root/")
+
+	dbConfig := DbConfig()
+
+	if dbConfig == nil {
+		return nil
+	}
+
+	log.Printf("Connecting to %v, %v", dbConfig.Driver, dbConfig.Url)
+
+	db, err := sql.Open(dbConfig.Driver, dbConfig.Url)
 
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
 	defer dbmap.Db.Close()
@@ -54,4 +71,27 @@ func posts() []Post {
 	}
 
 	return posts
+}
+
+func DbConfig() *DbConf {
+	p := "db/"
+	env := "development"
+	cfgFile := filepath.Join(p, "dbconf.yml")
+
+	f, err := yaml.ReadFile(cfgFile)
+	if err != nil {
+		return nil
+	}
+
+	drv, err := f.Get(fmt.Sprintf("%s.driver", env))
+	if err != nil {
+		return nil
+	}
+
+	open, err := f.Get(fmt.Sprintf("%s.open", env))
+	if err != nil {
+		return nil
+	}
+
+	return &DbConf{drv, open}
 }
