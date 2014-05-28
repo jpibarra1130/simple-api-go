@@ -1,0 +1,5 @@
+development:
+  driver: mymysql
+  import: github.com/ziutek/mymysql/godrv
+  dialect: mysql
+  open: tcp:localhost:3306*<database>/<username>/<password>
