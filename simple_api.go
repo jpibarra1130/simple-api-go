@@ -50,6 +50,7 @@ func posts() []Post {
 
 	if err != nil {
 		log.Fatal(err)
+		return nil
 	}
 
 	log.Printf("Connecting to %v, %v", conf.Driver.Name, conf.Driver.OpenStr)
