@@ -3,13 +3,10 @@ package main
 import (
 	"bitbucket.org/liamstask/goose/lib/goose"
 	"database/sql"
-	"encoding/json"
 	"flag"
 	"github.com/coopernurse/gorp"
-	"github.com/gorilla/mux"
 	_ "github.com/ziutek/mymysql/godrv"
 	"log"
-	"net/http"
 )
 
 type Post struct {
@@ -18,36 +15,11 @@ type Post struct {
 	Body  string `db:"body"`
 }
 
-func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/posts", postsHandler).Methods("GET")
-	r.HandleFunc("/", postsHandler).Methods("GET")
-
-	http.Handle("/", r)
-
-	log.Println("Server started. Listening...")
-	http.ListenAndServe(":3000", nil)
-}
-
-func postsHandler(w http.ResponseWriter, r *http.Request) {
-	out, err := json.Marshal(posts())
-
-	if err != nil {
-		log.Fatal(err)
-		w.Write([]byte("Something bad has happened."))
-		return
-	}
-
-	log.Printf("Post: %v", string(out))
-
-	w.Write([]byte(out))
-}
-
-// global options. available to any subcommands.
+// global options. available to any subcommands. This was taken from goose library
 var flagPath = flag.String("path", "db", "folder containing db info")
 var flagEnv = flag.String("env", "development", "which DB environment to use")
 
-func posts() []Post {
+func GetPosts() []Post {
 	conf, err := goose.NewDBConf(*flagPath, *flagEnv)
 
 	if err != nil {
