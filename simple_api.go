@@ -33,7 +33,9 @@ func postsHandler(w http.ResponseWriter, r *http.Request) {
 	out, err := json.Marshal(posts())
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+		w.Write([]byte("Something bad has happened."))
+		return
 	}
 
 	log.Printf("Post: %v", string(out))
