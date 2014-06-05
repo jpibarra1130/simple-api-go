@@ -5,21 +5,16 @@ import (
 	"database/sql"
 	"flag"
 	"github.com/coopernurse/gorp"
+	"github.com/jpibarra1130/simple-api-go/models"
 	_ "github.com/ziutek/mymysql/godrv"
 	"log"
 )
-
-type Post struct {
-	Id    int    `db:"id"`
-	Title string `db:"title"`
-	Body  string `db:"body"`
-}
 
 // global options. available to any subcommands. This was taken from goose library
 var flagPath = flag.String("path", "db", "folder containing db info")
 var flagEnv = flag.String("env", "development", "which DB environment to use")
 
-func GetPosts() []Post {
+func GetPosts() []models.Post {
 	conf, err := goose.NewDBConf(*flagPath, *flagEnv)
 
 	if err != nil {
@@ -34,7 +29,7 @@ func GetPosts() []Post {
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
 	defer dbmap.Db.Close()
 
-	var posts []Post
+	var posts []models.Post
 	_, err = dbmap.Select(&posts, "select id, title, body from posts order by id")
 
 	if err != nil {
