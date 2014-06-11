@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"github.com/jpibarra1130/simple-api-go/controllers"
 	"log"
 	"net/http"
 )
@@ -10,7 +11,6 @@ import (
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/posts", PostsHandler).Methods("GET")
-	r.HandleFunc("/", PostsHandler).Methods("GET")
 
 	http.Handle("/", r)
 
@@ -19,7 +19,7 @@ func main() {
 }
 
 func PostsHandler(w http.ResponseWriter, r *http.Request) {
-	out, err := json.Marshal(GetPosts())
+	out, err := json.Marshal(controllers.GetPosts())
 
 	if err != nil {
 		log.Fatal(err)
