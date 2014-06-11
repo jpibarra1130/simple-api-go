@@ -1,4 +1,4 @@
-package main
+package controllers
 
 import (
 	"bitbucket.org/liamstask/goose/lib/goose"
