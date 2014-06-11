@@ -6,11 +6,13 @@ import (
 	"github.com/jpibarra1130/simple-api-go/controllers"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/posts", PostsHandler).Methods("GET")
+	r.HandleFunc("/user/register", RegisterHandler).Methods("POST")
 
 	http.Handle("/", r)
 
@@ -30,4 +32,10 @@ func PostsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Post: %v", string(out))
 
 	w.Write([]byte(out))
+}
+
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	status := controllers.RegisterUser(r.FormValue("email"), r.FormValue("password"))
+
+	w.Write([]byte("{ status : \"" + strconv.FormatBool(status) + "\" }"))
 }
