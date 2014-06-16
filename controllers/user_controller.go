@@ -7,12 +7,13 @@ import (
 	"github.com/jpibarra1130/simple-api-go/models"
 	_ "github.com/ziutek/mymysql/godrv"
 	"log"
+	"os"
 )
 
 func RegisterUser(email string, password string) bool {
 	log.Println("email ", email)
 
-	user := models.User{Email: email, HashedPassword: models.HashPassword(password)}
+	user := models.NewUser(email, password)
 
 	conf, err := goose.NewDBConf(*flagPath, *flagEnv)
 
@@ -26,9 +27,13 @@ func RegisterUser(email string, password string) bool {
 	db, err := sql.Open(conf.Driver.Name, conf.Driver.OpenStr)
 
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
+	dbmap.TraceOn("[gorp]", log.New(os.Stdout, "myapp:", log.Lmicroseconds))
+
+	dbmap.AddTableWithName(models.User{}, "users").SetKeys(true, "Id")
+
 	defer dbmap.Db.Close()
 
-	err = dbmap.Insert(user)
+	err = dbmap.Insert(&user)
 
 	if err != nil {
 		log.Printf("Error: ", err)
