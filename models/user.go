@@ -3,15 +3,16 @@ package models
 import (
 	"code.google.com/p/go.crypto/bcrypt"
 	"log"
+	"time"
 )
 
 type User struct {
-	Id             int    `db:"id"`
+	Id             int64  `db:"id"`
 	Email          string `db:"email"`
-	HashedPassword []byte `db."hashed_password"`
-	Password       string
-	CreatedAt      int64 `db."created_at"`
-	UpdatedAt      int64 `db."updated_at"`
+	HashedPassword []byte `db:"hashed_password"`
+	Password       string `db:"-"`
+	CreatedAt      int64  `db:"created_at"`
+	UpdatedAt      int64  `db:"updated_at"`
 }
 
 func (user *User) ValidatePassword(password string) bool {
