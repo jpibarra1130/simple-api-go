@@ -35,3 +35,12 @@ func HashPassword(password string) []byte {
 
 	return hashedPassword
 }
+
+func NewUser(email string, password string) User {
+	return User{
+		Email:          email,
+		HashedPassword: HashPassword(password),
+		CreatedAt:      time.Now().UnixNano(),
+		UpdatedAt:      time.Now().UnixNano(),
+	}
+}
