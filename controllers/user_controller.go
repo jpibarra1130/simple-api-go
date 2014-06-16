@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github.com/jpibarra1130/simple-api-go/models"
-	_ "github.com/ziutek/mymysql/godrv"
 	"log"
 )
 
