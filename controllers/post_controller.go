@@ -3,16 +3,11 @@ package controllers
 import (
 	"bitbucket.org/liamstask/goose/lib/goose"
 	"database/sql"
-	"flag"
 	"github.com/coopernurse/gorp"
 	"github.com/jpibarra1130/simple-api-go/models"
 	_ "github.com/ziutek/mymysql/godrv"
 	"log"
 )
-
-// global options. available to any subcommands. This was taken from goose library
-var flagPath = flag.String("path", "db", "folder containing db info")
-var flagEnv = flag.String("env", "development", "which DB environment to use")
 
 func GetPosts() []models.Post {
 	conf, err := goose.NewDBConf(*flagPath, *flagEnv)
